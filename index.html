@@ -6,13 +6,20 @@
         <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="css/leaflet.css">
-        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css">
+						
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" >
+	
+        <link rel="stylesheet" href="css/qgis2web.css">
+		<link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
+		<link rel="stylesheet" href="css/logocontainer.css">
+		
         <style>
         html, body, #map {
             width: 100%;
-            height: 100%;
+            height: 97.5%;
             padding: 0;
             margin: 0;
         }
@@ -20,10 +27,26 @@
         <title></title>
     </head>
     <body>
+			
+		
+		<form action="/html/tags/html_form_tag_action.cfm" method="post">
+		<textarea name="comments" id="comments" style="width:20%;height:50px;background-color:gold;color:black;border:none;Font:22px/30px sans-serif; OVERFLOW: hidden; TEXT-ALIGN: left; TEXT-ALIGN: middle">
+		K1M SECTION 108
+		</textarea>
+		<textarea name="comments" id="comments" style="width:79.35%;height:50px;background-color:GREY;color:WHITE;border:none;Font:15px/18px sans-serif; OVERFLOW: hidden; position:middle">
+		[description]
+		</textarea>
+		</form>
+			
+		
+	
         <div id="map">
         </div>
+	
+		<script src="js/logocontainer.js"></script>
         <script src="js/qgis2web_expressions.js"></script>
-        <script src="js/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw-src.js"> </script>
         <script src="js/leaflet.rotatedMarker.js"></script>
         <script src="js/leaflet.pattern.js"></script>
         <script src="js/leaflet-hash.js"></script>
@@ -39,12 +62,60 @@
         <script src="data/RSLTOpeningnotFGPlantingDateNOTNull_4.js"></script>
         <script src="data/RSLT_FC_IN_StatusNSR_5.js"></script>
         <script>
-        var map = L.map('map', {
+ var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[53.673799146183775,-125.54818213274334],[53.804677036936596,-125.21584153812012]]);
-        var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
-        var measureControl = new L.Control.Measure({
+        }).fitBounds([[53.589907207903815,-125.72119937098745],[53.88859785056338,-124.96656689849965]]);
+        map.attributionControl.setPrefix('<a href="https://sites.google.com/xyintel.com/main/home" target="_blank">by XYINTEL [with qgis2web and Leaflet]</a> &middot; ');
+		
+	
+          
+  
+		//add scale bar to map
+		L.control.scale({
+            position: 'bottomleft'
+        }).addTo(map)
+		
+		
+		L.Control.Watermark = L.Control.extend({
+			onAdd: function(map) {
+			var img = L.DomUtil.create('img');
+
+				img.src = 'logo30C.png';
+				img.style.width = '90px';
+
+				return img;
+				},
+
+			onRemove: function(map) {
+				// Nothing to do here
+			}
+		});
+
+		L.control.watermark = function(opts) {
+			return new L.Control.Watermark(opts);
+			}
+
+		L.control.watermark({ position: 'bottomright' }).addTo(map);
+		
+		
+
+		var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        var drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        map.addControl(drawControl);
+
+        map.on('draw:created', function (e) {
+            var type = e.layerType,
+                layer = e.layer;
+            drawnItems.addLayer(layer);
+        });
+		
+		var measureControl = new L.Control.Measure({
             position: 'topleft',
             primaryLengthUnit: 'meters',
             secondaryLengthUnit: 'kilometers',
